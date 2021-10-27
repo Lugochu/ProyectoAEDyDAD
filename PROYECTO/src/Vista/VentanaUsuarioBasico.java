@@ -7,20 +7,14 @@ package Vista;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 /**
@@ -45,7 +39,7 @@ public class VentanaUsuarioBasico extends PanelEsquema implements ActionListener
         panelNorte.setLayout(new BorderLayout());
         JPanel panelNorteIconos = new JPanel();
         panelNorteIconos.setOpaque(false);
-        panelNorteIconos.setPreferredSize(new Dimension(90, 0));
+
         JButton boton = new JButton();
         ImageIcon img = new ImageIcon("src/imagenes/user.png");
         boton.setBorder(BorderFactory.createEmptyBorder());
