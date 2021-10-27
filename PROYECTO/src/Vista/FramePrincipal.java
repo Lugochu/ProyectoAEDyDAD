@@ -5,6 +5,8 @@
  */
 package Vista;
 
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -26,9 +28,8 @@ public class FramePrincipal extends JFrame {
 
     public void initComponents() {
         setContentPane(fondo);
-        
+        setLayout(new CardLayout());
         add(new VentanaIniciarSesion(this));
-
         //<editor-fold defaultstate="collapsed" desc="CONFIGURACION DEL FRAME">
         setTitle("Prueba");
         //CARGAR DIMENSION DE LA PANTALLA

@@ -28,7 +28,6 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
 
     public VentanaIniciarSesion(FramePrincipal frame) {
         super();
-        
         this.frame = frame;
         add(panelCentro(), "Center");
     }

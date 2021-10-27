@@ -23,11 +23,6 @@ public class PanelEsquema extends JPanel {
         setOpaque(false);
     }
 
-    public PanelEsquema(int i) {
-        setLayout(new BorderLayout());
-        add(panelNorte(), "North");
-        setOpaque(false);
-    }
 
     public JPanel panelNorte() {
         panelNorte = new JPanel();

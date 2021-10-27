@@ -41,21 +41,34 @@ public class VentanaCrearUsuario extends PanelEsquema implements ActionListener,
     }
 
     public JPanel panelCentro(JFrame frame) {
-        JPanel panelBordes = new JPanel();
+        
+        //<editor-fold defaultstate="collapsed" desc="PanelCentro">
         JPanel panelCentro = new JPanel();
+        panelCentro.setOpaque(false);
+
+        //</editor-fold>
+        
+        //<editor-fold defaultstate="collapsed" desc="PanelBordes">
+        JPanel panelBordes = new JPanel();
+        panelBordes.setLayout(new BoxLayout(panelBordes, 1));
+        panelBordes.setPreferredSize(new Dimension(500, 500));
+        panelBordes.setBackground(new Color(255, 255, 255, 20));
+        panelBordes.setBorder(BorderFactory.createBevelBorder(0, new Color(54, 171, 163), new Color(54, 171, 163), new Color(32, 84, 106), new Color(32, 84, 106)));
+
+//</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc="Panel Formulario Y Botones">
+        JPanel panelFormYBotones = new JPanel();
+        panelFormYBotones.setOpaque(false);
+
         JPanel panelFormulario = new JPanel();
         JPanel panelBotones = new JPanel();
-        panelCentro.setOpaque(false);
-        panelBordes.setPreferredSize(new Dimension(500, 300));
 
-        panelBordes.setBackground(new Color(255, 255, 255, 20));
         panelFormulario.setOpaque(false);
         panelBotones.setOpaque(false);
 
-        panelBordes.setBorder(BorderFactory.createBevelBorder(0, new Color(54, 171, 163), new Color(54, 171, 163), new Color(32, 84, 106), new Color(32, 84, 106)));
-
-        panelCentro.setLayout(new BoxLayout(panelCentro, 1));
         panelFormulario.setLayout(new BoxLayout(panelFormulario, 1));
+        //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="CORREO">
         JLabel lbCorreo = new JLabel("Correo");
@@ -129,12 +142,12 @@ public class VentanaCrearUsuario extends PanelEsquema implements ActionListener,
         panelBotones.add(registrarse);
         //</editor-fold>
 
-        panelBordes.add(panelCentro);
-        panelCentro.add(panelFormulario);
-        panelCentro.add(panelBotones);
+        panelCentro.add(panelBordes);
+        panelBordes.add(panelFormYBotones);
+        panelFormYBotones.add(panelFormulario);
+        panelFormYBotones.add(panelBotones);
 
-        panelBordes.repaint();
-        return panelBordes;
+        return panelCentro;
     }
 
     @Override

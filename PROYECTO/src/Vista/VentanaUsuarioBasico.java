@@ -6,41 +6,82 @@
 package Vista;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 /**
  *
  * @author Lugo
  */
-public class VentanaUsuarioBasico extends PanelEsquema {
+public class VentanaUsuarioBasico extends PanelEsquema implements ActionListener {
 
+    private JPanel panelNorte;
     private FramePrincipal frame;
 
     public VentanaUsuarioBasico(FramePrincipal frame) {
         super();
         this.frame = frame;
         add(panelNorteUsuarios(), "North");
-        setOpaque(true);
+        add(panelCentro(), "Center");
+
     }
 
     public JPanel panelNorteUsuarios() {
-        JPanel panelNorte = super.getPanelNorte();
-
-        panelNorte.setOpaque(true);
+        panelNorte = super.getPanelNorte();
+        panelNorte.setLayout(new BorderLayout());
         JPanel panelNorteIconos = new JPanel();
-        panelNorteIconos.setBackground(Color.yellow);
-        panelNorteIconos.setPreferredSize(new Dimension(500, 500));
-        panelNorteIconos.add(new JLabel("aaaaaaaaaaaaaaaaaaaaa"));
-        JButton boton = new JButton("aaaaaaaaa");
+        panelNorteIconos.setOpaque(false);
+        panelNorteIconos.setPreferredSize(new Dimension(90, 0));
+        JButton boton = new JButton();
+        ImageIcon img = new ImageIcon("src/imagenes/user.png");
+        boton.setBorder(BorderFactory.createEmptyBorder());
+        boton.setContentAreaFilled(false);
+        boton.setIcon(img);
+        boton.addActionListener(this);
         panelNorteIconos.add(boton);
-        panelNorte.add(panelNorteIconos);
+        panelNorte.add(panelNorteIconos, "East");
 
         return panelNorte;
     }
 
+    public JPanel panelCentro() {
+
+        JPanel panelCentro = new JPanel();
+        panelCentro.setLayout(new CardLayout());
+        panelCentro.setOpaque(false);
+        JPanel panelCentro2 = new JPanel();
+        JPanel panelCentro3 = new JPanel();
+
+        panelCentro2.setOpaque(false);
+        panelCentro3.setOpaque(false);
+
+        UIManager.put("TabbedPane.contentOpaque", false);
+        JTabbedPane panelPestanias = new JTabbedPane();
+
+        panelPestanias.addTab("Tab 1", null, panelCentro2, "Does nothing");
+        panelPestanias.addTab("Tab 1", null, panelCentro3, "Does nothing");
+
+        panelCentro.add(panelPestanias);
+        return panelCentro;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        System.out.println("AAAAAAA");
+    }
 
 }
