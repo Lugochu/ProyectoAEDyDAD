@@ -8,9 +8,11 @@ package Vista;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
+import java.awt.GridLayout;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -20,8 +22,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 /**
@@ -33,11 +38,19 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
     private JPanel panelNorte;
     private FramePrincipal frame;
     private final Color amarillo = new Color(247, 243, 146);
+    private final Color amarilloOscuro = new Color(236, 232, 117);
+
     private final Color verde = new Color(207, 248, 172);
+    private final Color verdeOscuro = new Color(179, 232, 134);
+
     private final Color azul = new Color(187, 207, 242);
+    private final Color azulOscuro = new Color(152, 180, 228);
+
     private final Color rosa = new Color(242, 182, 234);
+    private final Color rosaOscuro = new Color(228, 154, 218);
+
     private String rutaIconoUser = "src/imagenes/user.png";
-    
+
     public VentanaUsuario(FramePrincipal frame) {
         super();
         this.frame = frame;
@@ -75,13 +88,32 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
         panelCentro2.setOpaque(false);
         panelCentro3.setOpaque(false);
         for (int i = 0; i < 10; i++) {
-            panelCentro2.add(panelPosItMiniatura("", ""));
+            panelCentro2.add(panelPosItMiniatura("Esto es una prueba de titulo", "Esto es una prueba de nota "
+                    + "Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto "
+                    + "es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es un"
+                    + "a prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una pru"
+                    + "eba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba d"
+                    + "e nota Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba de not"
+                    + "a Esto es una prueba de nota Esto es una prueba de nota adsdadsasd Esto es una prueba "
+                    + "de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba de not"
+                    + "a Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto"
+                    + " es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es u"
+                    + "na prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una pr"
+                    + "ueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba "
+                    + "de nota Esto es una prueba de nota Esto es una prueba de nota adsdadsasd Esto es una p"
+                    + "rueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba"
+                    + " de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba de no"
+                    + "ta Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Es"
+                    + "to es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es"
+                    + " una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es una "
+                    + "prueba de nota Esto es una prueba de nota Esto es una prueba de nota adsdadsasd",
+                    rosaOscuro, rosa));
 
         }
         UIManager.put("TabbedPane.contentOpaque", false);
         JTabbedPane panelPestanias = new JTabbedPane();
 
-        panelPestanias.addTab("Tab 1", null, panelCentro2,null);
+        panelPestanias.addTab("Tab 1", null, panelCentro2, null);
         panelPestanias.addTab("Tab 1", null, panelCentro3, "Does nothing");
 
         panelCentro.add(panelPestanias);
@@ -95,21 +127,34 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
     }
 
-    public JPanel panelPosItMiniatura(String titulo, String nota) {
+    public JPanel panelPosItMiniatura(String tituloStr, String notaStr, Color colorTitulo, Color colorNota) {
         JPanel panelPosIt = new JPanel();
         JPanel panelPosItNorte = new JPanel();
         JPanel panelPosItCentro = new JPanel();
-        JPanel panelPosItSur = new JPanel();
 
-        panelPosIt.setPreferredSize(new Dimension(300, 300));
+        tituloStr = tituloStr.toUpperCase();
+        JLabel titulo = new JLabel(tituloStr);
+        titulo.setForeground(Color.white);
+
+        JTextArea nota = new JTextArea(notaStr);
+        nota.setLineWrap(true);
+        nota.setLayout(new GridLayout());
+        nota.addMouseListener(this);
+        nota.setEditable(false);
+        nota.setBackground(colorNota);
+
+        panelPosIt.setPreferredSize(new Dimension(320, 300));
         panelPosItNorte.setPreferredSize(new Dimension(0, 50));
-        panelPosItNorte.setBackground(rosa);
-        panelPosItCentro.setBackground(amarillo);
+
+        panelPosItNorte.setBackground(colorTitulo);
+        panelPosItNorte.add(titulo);
+        panelPosItCentro.setBackground(colorNota);
+        panelPosItCentro.add(nota);
+        panelPosItCentro.setLayout(new CardLayout(10,10));
 
         panelPosIt.setLayout(new BorderLayout());
         panelPosIt.add(panelPosItNorte, "North");
         panelPosIt.add(panelPosItCentro, "Center");
-        panelPosIt.add(panelPosItSur, "South");
         panelPosIt.addMouseListener(this);
         return panelPosIt;
     }
@@ -122,8 +167,8 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
         JPanel panelPosItSur = new JPanel();
 
         panelPosItNorte.setPreferredSize(new Dimension(0, 50));
-        panelPosItNorte.setBackground(rosa);
-        panelPosItCentro.setBackground(amarillo);
+        panelPosItNorte.setBackground(rosaOscuro);
+        panelPosItCentro.setBackground(rosa);
         JCheckBox negrita = new JCheckBox();
         JCheckBox cursiva = new JCheckBox();
         JCheckBox subrayada = new JCheckBox();
@@ -156,7 +201,6 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
     @Override
     public void mousePressed(MouseEvent me) {
         if (me.getClickCount() == 2) {
-            System.out.println(me.getSource());
             panelPosIt("", "", null, null);
         }
     }
