@@ -6,7 +6,6 @@
 package Vista;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -19,8 +18,8 @@ import javax.swing.JPanel;
  * @author Lugo
  */
 public class FramePrincipal extends JFrame {
-
-    private FondoPanel fondo = new FondoPanel();
+    private String rutaImagenBackgroud="/imagenes/degradadoFrame.jpg";
+    private FondoPanel fondo = new FondoPanel(rutaImagenBackgroud);
 
     public FramePrincipal() {
         initComponents();
@@ -55,10 +54,16 @@ public class FramePrincipal extends JFrame {
 class FondoPanel extends JPanel {
 
     private Image imagen;
-
+    private String rutaImg;
+    
+    
+    public FondoPanel(String rutaImg){
+        this.rutaImg=rutaImg;
+    }
+    
     @Override
     public void paint(Graphics g) {
-        imagen = new ImageIcon(getClass().getResource("/imagenes/degradadoFrame.jpg")).getImage();
+        imagen = new ImageIcon(getClass().getResource(rutaImg)).getImage();
 
         g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
 
