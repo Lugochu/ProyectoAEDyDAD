@@ -8,11 +8,9 @@ package Vista;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -24,7 +22,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
@@ -87,7 +84,7 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
         panelCentro2.setOpaque(false);
         panelCentro3.setOpaque(false);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             panelCentro2.add(panelPosItMiniatura("Esto es una prueba de titulo", "Esto es una prueba de nota "
                     + "Esto es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto "
                     + "es una prueba de nota Esto es una prueba de nota Esto es una prueba de nota Esto es un"
