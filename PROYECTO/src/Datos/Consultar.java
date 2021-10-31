@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Consultar {
 
-    public ArrayList<Nota> consultarNotas(String email, String pass, int idGrup) throws ClassNotFoundException {
+    public ArrayList<Nota> consultarNotas(String email, String pass, Usuario user) throws ClassNotFoundException {
         ArrayList<Nota> list = new ArrayList();
         int idNota;
         String titulo;
@@ -35,22 +35,22 @@ public class Consultar {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
             Statement stmt = con.createStatement();
-            ResultSet res = stmt.executeQuery("SELECT * FROM notas WHERE idgrupo='" + idGrup + "'");
+            ResultSet res = stmt.executeQuery("SELECT * FROM notas WHERE idUsuario='" + user.getEmail() + "'");
             while (res.next()) {
                 idNota = res.getInt("idNota");
                 titulo = res.getString("titulo");
                 nota = res.getString("nota");
-                if (res.getInt("negrita") == 1) {
+                if (res.getByte("negrita") == 1) {
                     negrita = true;
                 } else {
                     negrita = false;
                 }
-                if (res.getInt("cursiva") == 1) {
+                if (res.getByte("cursiva") == 1) {
                     cursiva = true;
                 } else {
                     cursiva = false;
                 }
-                if (res.getInt("subrayar") == 1) {
+                if (res.getByte("subrayar") == 1) {
                     subrayar = true;
                 } else {
                     subrayar = false;
@@ -78,7 +78,7 @@ public class Consultar {
             Statement stmt = con.createStatement();
             ResultSet res = stmt.executeQuery("SELECT * FROM usuarios WHERE email='" + email + "'");
             while (res.next()) {
-                user = new Usuario(res.getString("email"), res.getString("nombre"), res.getString("idIcono"), res.getInt("tipoUser"), res.getString("idIcono"), res.getString("keyGrup"));
+                user = new Usuario(res.getString("email"), res.getString("nombre"), res.getString("idIcono"), res.getByte("tipoUser"), res.getString("idIcono"), res.getString("keyGrup"));
             }
             res.close();
             stmt.close();
@@ -89,7 +89,7 @@ public class Consultar {
         return user;
     }
 
-    public int consultaGrupo(String email, String pass) throws ClassNotFoundException {
+    /*public int consultaGrupo(String email, String pass) throws ClassNotFoundException {
         int idgrupo = 0;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -104,5 +104,26 @@ public class Consultar {
         } catch (SQLException sqle) {
         }
         return idgrupo;
+    }*/
+    
+    public ArrayList<Usuario> consultaUsuariosGrupo(String email, String pass, String keyGroup) throws ClassNotFoundException {
+        
+        ArrayList<Usuario> list = new ArrayList();
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
+            Statement stmt = con.createStatement();
+            ResultSet res = stmt.executeQuery("SELECT * FROM usuarios WHERE keyGroup='" + keyGroup + "'");
+            while (res.next()) {
+            list.add(new Usuario(res.getString("email"), res.getString("nombre"), res.getString("idIcono"), res.getByte("tipoUser"), res.getString("idIcono"), res.getString("keyGrup")));
+            }
+            res.close();
+            stmt.close();
+            con.close();
+
+        } catch (SQLException sqle) {
+        }
+        return list;
     }
 }

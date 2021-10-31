@@ -18,24 +18,26 @@ public class Registro {
     private String user = "root";
     private String pass = "root";
     
-    public boolean Registro(String email, String nombre, String pass1, String idIcono, int tipoUser, String keyGrup) throws ClassNotFoundException{
-        //ResultSet resultado = null;
+    public boolean Registro(Usuario user1) throws ClassNotFoundException{
+        Byte tipoUser = null;
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/animales",user,pass);
             Statement stmt = con.createStatement();
-            if(tipoUser==0){
-                stmt.executeUpdate("CREATE USER '"+email+"'@'proyectonotas' IDENTIFIED BY '"+pass1+"'");
-                stmt.executeUpdate("GRANT ALL ON proyectonotas.notas TO '"+email+"'@'proyectonotas'");
-                stmt.executeUpdate("GRANT ALL ON proyectonotas.usuarios TO '"+email+"'@'proyectonotas'");
+            if(user1.getTipoUser()==false){
+                stmt.executeUpdate("CREATE USER '"+user1.getEmail()+"'@'proyectonotas' IDENTIFIED BY '"+user1.getPass()+"'");
+                stmt.executeUpdate("GRANT ALL ON proyectonotas.notas TO '"+user1.getEmail()+"'@'proyectonotas'");
+                stmt.executeUpdate("GRANT ALL ON proyectonotas.usuarios TO '"+user1.getEmail()+"'@'proyectonotas'");
+                tipoUser=0;
             }else{
-                stmt.executeUpdate("CREATE USER '"+email+"'@'proyectonotas' IDENTIFIED BY '"+pass1+"'");
-                stmt.executeUpdate("GRANT ALL ON proyectonotas.notas TO '"+email+"'@'proyectonotas'");
-                stmt.executeUpdate("GRANT ALL ON proyectonotas.grupo TO '"+email+"'@'proyectonotas'");
-                stmt.executeUpdate("GRANT ALL ON proyectonotas.usuarios TO '"+email+"'@'proyectonotas'");
+                stmt.executeUpdate("CREATE USER '"+user1.getEmail()+"'@'proyectonotas' IDENTIFIED BY '"+user1.getPass()+"'");
+                stmt.executeUpdate("GRANT ALL ON proyectonotas.notas TO '"+user1.getEmail()+"'@'proyectonotas'");
+                stmt.executeUpdate("GRANT ALL ON proyectonotas.grupo TO '"+user1.getEmail()+"'@'proyectonotas'");
+                stmt.executeUpdate("GRANT ALL ON proyectonotas.usuarios TO '"+user1.getEmail()+"'@'proyectonotas'");
+                tipoUser=1;
             }
             
-            stmt.executeUpdate("INSERT INTO usuarios VALUES ('"+email+"','"+nombre+"','"+pass1+"','"+idIcono+"',"+tipoUser+",'"+keyGrup+"')");
+            stmt.executeUpdate("INSERT INTO usuarios VALUES ('"+user1.getEmail()+"','"+user1.getNombre()+"','"+user1.getPass()+"','"+user1.getIdIcono()+"',"+tipoUser+",'"+user1.getKeyGrup()+"')");
             
             stmt.close();
             con.close();

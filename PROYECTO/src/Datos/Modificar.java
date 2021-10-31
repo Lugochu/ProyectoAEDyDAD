@@ -17,25 +17,25 @@ import java.sql.Statement;
 public class Modificar {
 
     public boolean modificarNota(String email, String pass, Nota nota) throws ClassNotFoundException {
-        String negrita;
+        Byte negrita;
         if (nota.isNegrita()) {
-            negrita = "1";
+            negrita = 1;
         } else {
-            negrita = "0";
+            negrita = 0;
 
         }
-        String cursiva;
+        Byte cursiva;
         if (nota.isCursiva()) {
-            cursiva = "1";
+            cursiva = 1;
         } else {
-            cursiva = "0";
+            cursiva = 0;
 
         }
-        String subrayar;
+        Byte subrayar;
         if (nota.isSubrayar()) {
-            subrayar = "1";
+            subrayar = 1;
         } else {
-            subrayar = "0";
+            subrayar = 0;
 
         }
         try {
@@ -43,7 +43,7 @@ public class Modificar {
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
             Statement stmt = con.createStatement();
             stmt.executeUpdate("UPDATE notas SET nota='" + nota.getNota() + "', negrita=" + negrita + ", cursiva=" +cursiva+ ", subrayar=" +subrayar+ ", "
-                    + "fondoColor='" + nota.getFondoColor() + "', modifDate='" + nota.getModifDate() + "' WHERE idNota='" + nota.getIdNota() + "'");
+                    + "fondoColor=" + nota.getFondoColor() + ", modifDate='" + nota.getModifDate() + "' WHERE idNota=" + nota.getIdNota() + "");
 
             stmt.close();
             con.close();

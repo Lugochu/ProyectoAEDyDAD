@@ -44,7 +44,7 @@ public class InicioSesion {
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas",user,pass);
             Statement stmt = con.createStatement();
             ResultSet res = stmt.executeQuery("SELECT tipoUser FROM usuarios WHERE email='"+email+"'");
-            if(res.getInt("tipoUser")==0){
+            if(res.getByte("tipoUser")==0){
                 verificado = false;
             }else{
                 verificado = true;
@@ -87,7 +87,7 @@ public class InicioSesion {
                 user1.setEmail(res.getString("email"));
                 user1.setNombre(res.getString("nombre"));
                 user1.setPass(res.getString("pass"));
-                user1.setTipoUser(res.getInt("tipoUser"));
+                user1.setTipoUser(res.getByte("tipoUser"));
                 user1.setIdIcono(res.getString("idIcono"));
                 user1.setKeyGrup(res.getString("keyGrup"));
             }
