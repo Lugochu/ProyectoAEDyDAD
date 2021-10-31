@@ -15,27 +15,30 @@ public class Nota {
     private int idNota;
     private String titulo;
     private String nota;
-    private String negrita;
-    private String cursiva;
-    private String subrayar;
-    private String fondoColor;
+    private boolean negrita;
+    private boolean cursiva;
+    private boolean subrayar;
+    private int fondoColor;
     private Date crearDate;
     private Date modifDate;
+    private String idUsuario; 
     
-    public Nota(int idNota, String titulo, String nota, String negrita, String cursiva, String subrayar, String fondoColor, Date crearDate, Date modifDate){
+    public Nota(int idNota, String titulo, String nota, boolean negrita, boolean cursiva, boolean subrayar, int fondoColor, Date crearDate, Date modifDate, String idUsuario){
         this.idNota = idNota;
         this.titulo = titulo;
-        this.nota = nota;
+        this.nota = nota;  
         this.negrita = negrita;
         this.cursiva = cursiva;
         this.subrayar = subrayar;
         this.fondoColor = fondoColor;
         this.crearDate = crearDate;
         this.modifDate = modifDate;
+        this.idUsuario=idUsuario;
     }
 
     public int getIdNota() {
         return idNota;
+        
     }
 
     public void setIdNota(int idNota) {
@@ -58,35 +61,35 @@ public class Nota {
         this.nota = nota;
     }
 
-    public String getNegrita() {
+    public boolean isNegrita() {
         return negrita;
     }
 
-    public void setNegrita(String negrita) {
+    public void setNegrita(boolean negrita) {
         this.negrita = negrita;
     }
 
-    public String getCursiva() {
+    public boolean isCursiva() {
         return cursiva;
     }
 
-    public void setCursiva(String cursiva) {
+    public void setCursiva(boolean cursiva) {
         this.cursiva = cursiva;
     }
 
-    public String getSubrayar() {
+    public boolean isSubrayar() {
         return subrayar;
     }
 
-    public void setSubrayar(String subrayar) {
+    public void setSubrayar(boolean subrayar) {
         this.subrayar = subrayar;
     }
 
-    public String getFondoColor() {
+    public int getFondoColor() {
         return fondoColor;
     }
 
-    public void setFondoColor(String fondoColor) {
+    public void setFondoColor(int fondoColor) {
         this.fondoColor = fondoColor;
     }
 
@@ -105,5 +108,5 @@ public class Nota {
     public void setModifDate(Date modifDate) {
         this.modifDate = modifDate;
     }
-    
+
 }

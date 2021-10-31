@@ -5,6 +5,7 @@
  */
 package Vista;
 
+import Datos.Usuario;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -26,6 +27,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
+
 /**
  *
  * @author Lugo
@@ -34,6 +36,8 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
     private JPanel panelNorte;
     private FramePrincipal frame;
+    private Usuario user;
+    
     private final Color amarillo = new Color(247, 243, 146);
     private final Color amarilloOscuro = new Color(236, 232, 117);
 
@@ -48,9 +52,10 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
     private String rutaIconoUser = "src/imagenes/user.png";
 
-    public VentanaUsuario(FramePrincipal frame) {
+    public VentanaUsuario(FramePrincipal frame, Usuario user) {
         super();
         this.frame = frame;
+        this.user = user;
         add(panelNorteUsuarios(), "North");
         add(panelCentro(), "Center");
 
@@ -110,8 +115,8 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
         UIManager.put("TabbedPane.contentOpaque", false);
         JTabbedPane panelPestanias = new JTabbedPane();
 
-        panelPestanias.addTab("Tab 1", null, panelCentro2, null);
-        panelPestanias.addTab("Tab 1", null, panelCentro3, "Does nothing");
+        panelPestanias.addTab(user.getNombre(), null, panelCentro2, null);
+        panelPestanias.addTab("Tab 1", null, panelCentro3, null);
 
         panelCentro.add(panelPestanias);
         return panelCentro;
@@ -121,7 +126,6 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
         JPanel pestania = new JPanel();
         pestania.setName(nombre);
         return pestania;
-
     }
 
     public JPanel panelPosItMiniatura(String tituloStr, String notaStr, Color colorTitulo, Color colorNota) {
@@ -134,6 +138,8 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
         titulo.setForeground(Color.white);
 
         JTextArea nota = new JTextArea(notaStr);
+
+
         nota.setLineWrap(true);
         nota.setLayout(new GridLayout());
         nota.addMouseListener(this);
@@ -147,7 +153,7 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
         panelPosItNorte.add(titulo);
         panelPosItCentro.setBackground(colorNota);
         panelPosItCentro.add(nota);
-        panelPosItCentro.setLayout(new CardLayout(10,10));
+        panelPosItCentro.setLayout(new CardLayout(20, 10));
 
         panelPosIt.setLayout(new BorderLayout());
         panelPosIt.add(panelPosItNorte, "North");
@@ -192,7 +198,6 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
     @Override
     public void mouseClicked(MouseEvent me) {
-
     }
 
     @Override
@@ -216,5 +221,4 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
     public void mouseExited(MouseEvent me) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

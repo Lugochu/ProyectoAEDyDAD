@@ -6,6 +6,7 @@
 package Vista;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
@@ -20,7 +21,8 @@ import javax.swing.JTextField;
  * @author Lugo
  */
 public class VentanaIniciarSesion extends PanelEsquema implements ActionListener {
-
+    
+    private Dimension tamanioTextFields = new Dimension(200,25);
     private FramePrincipal frame;
 
     public VentanaIniciarSesion(FramePrincipal frame) {
@@ -49,6 +51,7 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
         lbCorreo.setOpaque(false);
         formulario.add(lbCorreo);
         JTextField tfCorreo = new JTextField(20);
+        tfCorreo.setPreferredSize(tamanioTextFields);
         formulario.add(tfCorreo);
         //CONTRASE?A
         JLabel lbContrasenia = new JLabel("Password");
@@ -56,6 +59,7 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
         lbContrasenia.setOpaque(false);
         formulario.add(lbContrasenia);
         JPasswordField tfContrasenia = new JPasswordField();
+        tfContrasenia.setPreferredSize(tamanioTextFields);
         formulario.add(tfContrasenia);
         //BOTONES
         JButton iniciarSesion = new JButton("Iniciar sesion");
