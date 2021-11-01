@@ -5,6 +5,7 @@
  */
 package Vista;
 
+import Datos.Registro;
 import Datos.Usuario;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -236,7 +237,6 @@ public class VentanaCrearUsuario extends PanelEsquema
     }
 
     public void tablaIconos() {
-        //<editor-fold defaultstate="collapsed" desc="TABLA ICONOS">
         panelLbIcono = new JPanel();
         panelLbIcono.setOpaque(false);
         panelLbIcono.setLayout(new CardLayout());
@@ -252,29 +252,27 @@ public class VentanaCrearUsuario extends PanelEsquema
         ImageIcon img;
         JButton boton;
         String idImg = "";
-        int idImagen = 1;
-        for (int i = 0; i < 10; i++) {
-            if (idImagen < 10) {
 
-                img = new ImageIcon("src/imagenes/avatar0" + idImagen + ".png");
-                idImg = "id.0" + String.valueOf(idImagen);
+        for (int i = 1; i <= 10; i++) {
+            if (i < 10) {
+                idImg = "id_0" + i;
+                img = new ImageIcon("src/imagenes/" + idImg + ".png");
             } else {
-                img = new ImageIcon("src/imagenes/avatar" + idImagen + ".png");
-                idImg = "id." + String.valueOf(idImagen);
+                idImg = "id_" + i;
+                img = new ImageIcon("src/imagenes/" + idImg + ".png");
 
             }
 
             etiquetaIcono = new JLabel(img);
-            panelesIconos[i] = new JPanel();
-            panelesIconos[i].setName(idImg);
-            panelesIconos[i].add(etiquetaIcono);
-            panelesIconos[i].setBackground(new Color(255, 255, 255, 0));
-            panelesIconos[i].addMouseListener(this);
-            panelesIconos[i].setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-            panelesIconos[i].setBackground(new Color(39, 124, 131, 0));
+            panelesIconos[i - 1] = new JPanel();
+            panelesIconos[i - 1].setName(idImg);
+            panelesIconos[i - 1].add(etiquetaIcono);
+            panelesIconos[i - 1].setBackground(new Color(255, 255, 255, 0));
+            panelesIconos[i - 1].addMouseListener(this);
+            panelesIconos[i - 1].setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+            panelesIconos[i - 1].setBackground(new Color(39, 124, 131, 0));
 
-            panelIconos.add(panelesIconos[i]);
-            idImagen++;
+            panelIconos.add(panelesIconos[i - 1]);
         }
         panelErrorIcono = new JPanel();
         iconoError = new JLabel(" ");
@@ -285,7 +283,6 @@ public class VentanaCrearUsuario extends PanelEsquema
         panelFormulario.add(panelLbIcono, 9);
         panelFormulario.add(panelIconos, 10);
         panelFormulario.add(panelErrorIcono, 11);
-        //</editor-fold>
     }
 
     public void panelGrupo(String etiqueta) {
@@ -412,59 +409,79 @@ public class VentanaCrearUsuario extends PanelEsquema
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equals("Atras")) {
-            frame.remove(this);
-            frame.add(new VentanaIniciarSesion(frame));
-            frame.setVisible(true);
-            frame.repaint();
-        } else if (ae.getActionCommand().equals("Siguiente")) {
-            errorLabelReset();
-            if (!validarEmail(tfCorreo.getText())) {
-                lbCorreoError.setText("Error, correo no valido");
-                this.repaint();
-            }
-
-            switch (tipoUsu) {
-                case 0:
-                    lbRadioButtonError.setText("Error, escoge un tipo de usuario");
+        switch (ae.getActionCommand()) {
+            case "Atras":
+                frame.remove(this);
+                frame.add(new VentanaIniciarSesion(frame));
+                frame.setVisible(true);
+                frame.repaint();
+                break;
+            case "Siguiente":
+                errorLabelReset();
+                if (!validarEmail(tfCorreo.getText())) {
+                    lbCorreoError.setText("Error, correo no valido");
                     this.repaint();
-                    comprobarFormulario();
+                }
+                switch (tipoUsu) {
+                    case 0:
+                        lbRadioButtonError.setText("Error, escoge un tipo de usuario");
+                        this.repaint();
+                        comprobarFormulario();
+                        if (idIcono.equals("")) {
+                            iconoError.setText("Error, escoge un icono");
+                            this.repaint();
+                        }
+                        break;
+                    case 1:
+                        if (comprobarFormulario()) {
+                            desactivarPrimerFormulario();
+                            panelGrupo("Introduce un nombre para crear un grupo");
+                            registrarse.setText("Registrate");
+                            registrarse.setActionCommand("Registrate");
+                        }
+                        break;
+                    case 2:
+                        if (comprobarFormulario()) {
+                            desactivarPrimerFormulario();
+                            panelGrupo("Introduce la clave del grupo que te quieres unir");
+                            registrarse.setText("Registrate");
+                            registrarse.setActionCommand("Registrate");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case "Registrate":
+                if (comprobarKeyGroup()) {
+                    for (int i = 0; i < tfContrasenia.getPassword().length; i++) {
+
+                    }
+                    char[] arrayLetras = tfContrasenia.getPassword();
+                    String contrasenia = "";
+                    for (char arrayLetra : arrayLetras) {
+                        contrasenia += arrayLetra;
+                    }
+                    System.out.println(contrasenia);
                     if (idIcono.equals("")) {
                         iconoError.setText("Error, escoge un icono");
                         this.repaint();
+                    } else {
+//                      Encrypt encrp = new Encrypt();
+//                      String contraseniaEncriptada = encrp.getAES(contrasenia);
+//                      System.out.println(contraseniaEncriptada);
+                        Usuario user = new Usuario(tfCorreo.getText(), tfNombre.getText(), contrasenia, tipoUsu, idIcono, tfGrupo.getText());
+                        Registro regis = new Registro();
+                        regis.Registro(user);
+                        frame.remove(this);
+                        frame.add(new VentanaUsuario(frame, user));
+                        frame.setVisible(true);
+                        frame.repaint();
                     }
-                    break;
-                case 1:
-                    if (comprobarFormulario()) {
-                        desactivarPrimerFormulario();
-                        panelGrupo("Introduce un nombre para crear un grupo");
-                        registrarse.setText("Registrate");
-                        registrarse.setActionCommand("Registrate");
-                    }
-                    break;
-                case 2:
-                    if (comprobarFormulario()) {
-                        desactivarPrimerFormulario();
-                        panelGrupo("Introduce la clave del grupo que te quieres unir");
-                        registrarse.setText("Registrate");
-                        registrarse.setActionCommand("Registrate");
-                    }
-                    break;
-                default:
-                    break;
-            }
-        } else if (ae.getActionCommand().equals("Registrate")) {
-            if (comprobarKeyGroup()) {
-                for (int i = 0; i < tfContrasenia.getPassword().length; i++) {
-
                 }
-                Usuario user = new Usuario(tfCorreo.getText(), tfNombre.getText(), Arrays.toString(tfContrasenia.getPassword()), tipoUsu, idIcono, tfGrupo.getText());
-                System.out.println(user.toString());
-                frame.remove(this);
-                frame.add(new VentanaUsuario(frame,user));
-                frame.setVisible(true);
-                frame.repaint();
-            }
+                break;
+            default:
+                break;
         }
     }
 
@@ -488,7 +505,6 @@ public class VentanaCrearUsuario extends PanelEsquema
                     panelCentro.repaint();
                 }
             }
-
         }
     }
 

@@ -5,6 +5,8 @@
  */
 package Vista;
 
+import Datos.InicioSesion;
+import Datos.Usuario;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -21,10 +23,13 @@ import javax.swing.JTextField;
  * @author Lugo
  */
 public class VentanaIniciarSesion extends PanelEsquema implements ActionListener {
-    
-    private Dimension tamanioTextFields = new Dimension(200,25);
-    private FramePrincipal frame;
 
+    private Dimension tamanioTextFields = new Dimension(200, 25);
+    private FramePrincipal frame;
+    private JPasswordField tfContrasenia;
+    private JTextField tfCorreo;
+    private JLabel lbError;
+    
     public VentanaIniciarSesion(FramePrincipal frame) {
         super();
         this.frame = frame;
@@ -46,11 +51,12 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
         formulario.setLayout(new BoxLayout(formulario, BoxLayout.Y_AXIS));
 
         //CORREO
+        lbError = new JLabel(" ");
         JLabel lbCorreo = new JLabel("Correo");
         lbCorreo.setForeground(Color.white);
         lbCorreo.setOpaque(false);
         formulario.add(lbCorreo);
-        JTextField tfCorreo = new JTextField(20);
+        tfCorreo = new JTextField(20);
         tfCorreo.setPreferredSize(tamanioTextFields);
         formulario.add(tfCorreo);
         //CONTRASE?A
@@ -58,7 +64,7 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
         lbContrasenia.setForeground(Color.white);
         lbContrasenia.setOpaque(false);
         formulario.add(lbContrasenia);
-        JPasswordField tfContrasenia = new JPasswordField();
+        tfContrasenia = new JPasswordField();
         tfContrasenia.setPreferredSize(tamanioTextFields);
         formulario.add(tfContrasenia);
         //BOTONES
@@ -70,6 +76,7 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
         botones.add(regristrate);
 
         panelCentro.add(panelFormYBotones);
+        panelFormYBotones.add(lbError);
         panelFormYBotones.add(formulario);
         panelFormYBotones.add(botones);
 
@@ -83,7 +90,24 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
             frame.add(new VentanaCrearUsuario(frame));
             frame.setVisible(true);
         } else if (ae.getActionCommand().equals("Iniciar sesion")) {
-            System.out.println("");
+            InicioSesion is = new InicioSesion();
+            char[] arrayLetras = tfContrasenia.getPassword();
+            String contrasenia = "";
+            String correo = String.valueOf(tfCorreo.getText().charAt(0)).toUpperCase() + tfCorreo.getText().substring(1, tfCorreo.getText().length());
+            System.out.println(correo);
+            for (char arrayLetra : arrayLetras) {
+                contrasenia += arrayLetra;
+            }
+            if (is.verificarInicio(correo, contrasenia)) {
+                frame.remove(this);
+                Usuario usu = new Usuario();
+                usu = is.objUsuario(tfCorreo.getText(), contrasenia);
+                System.out.println(usu.toString());
+                frame.add(new VentanaUsuario(frame, usu));
+                frame.setVisible(true);
+            } else {
+                lbError.setText("Error, usuario o contrase?a incorrecta.");
+            }
         }
     }
 

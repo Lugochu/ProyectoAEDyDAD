@@ -12,6 +12,7 @@ import java.sql.Date;
  * @author 2damab
  */
 public class Nota {
+
     private int idNota;
     private String titulo;
     private String nota;
@@ -21,24 +22,36 @@ public class Nota {
     private int fondoColor;
     private Date crearDate;
     private Date modifDate;
-    private String idUsuario; 
-    
-    public Nota(int idNota, String titulo, String nota, boolean negrita, boolean cursiva, boolean subrayar, int fondoColor, Date crearDate, Date modifDate, String idUsuario){
-        this.idNota = idNota;
+    private String idUsuario;
+
+    public Nota(String titulo, String nota, boolean negrita, boolean cursiva, boolean subrayar, int fondoColor, Date crearDate, Date modifDate, String idUsuario) {
         this.titulo = titulo;
-        this.nota = nota;  
+        this.nota = nota;
         this.negrita = negrita;
         this.cursiva = cursiva;
         this.subrayar = subrayar;
         this.fondoColor = fondoColor;
         this.crearDate = crearDate;
         this.modifDate = modifDate;
-        this.idUsuario=idUsuario;
+        this.idUsuario = idUsuario;
+    }
+
+    public Nota(int idNota, String titulo, String nota, boolean negrita, boolean cursiva, boolean subrayar, int fondoColor, Date crearDate, Date modifDate, String idUsuario) {
+        this.idNota = idNota;
+        this.titulo = titulo;
+        this.nota = nota;
+        this.negrita = negrita;
+        this.cursiva = cursiva;
+        this.subrayar = subrayar;
+        this.fondoColor = fondoColor;
+        this.crearDate = crearDate;
+        this.modifDate = modifDate;
+        this.idUsuario = idUsuario;
     }
 
     public int getIdNota() {
         return idNota;
-        
+
     }
 
     public void setIdNota(int idNota) {
@@ -107,6 +120,11 @@ public class Nota {
 
     public void setModifDate(Date modifDate) {
         this.modifDate = modifDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Nota{" + "idNota=" + idNota + ", titulo=" + titulo + ", nota=" + nota + ", negrita=" + negrita + ", cursiva=" + cursiva + ", subrayar=" + subrayar + ", fondoColor=" + fondoColor + ", crearDate=" + crearDate + ", modifDate=" + modifDate + ", idUsuario=" + idUsuario + '}';
     }
 
 }

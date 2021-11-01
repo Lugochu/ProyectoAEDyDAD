@@ -31,6 +31,9 @@ public class Usuario {
         this.keyGrup = keyGrup;
     }
 
+    public Usuario() {
+    }
+
     public String getEmail() {
         return email;
     }

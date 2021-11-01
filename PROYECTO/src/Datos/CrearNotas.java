@@ -9,38 +9,29 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author eduar
  */
 public class CrearNotas {
-    public boolean crearNota(String user, String pass, Nota nota) throws ClassNotFoundException{
+    public boolean crearNota(String user, String pass, Nota nota, Usuario usu){
         Byte negrita = null;
         Byte cursiva = null;
         Byte subrayar = null;
         try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/animales",user,pass);
-            Statement stmt = con.createStatement();
-            if(nota.isNegrita()){
-                negrita = 1;
-            }else{negrita=0;}
-            
-            if(nota.isCursiva()){
-                cursiva = 1;
-            }else{cursiva=0;}
-            
-            if(nota.isSubrayar()){
-                subrayar = 1;
-            }else{subrayar=0;}
-
-            stmt.executeUpdate("INSERT INTO notas VALUES (null,'"+nota.getTitulo()+"','"+nota.getNota()+"',"+negrita+","
-                    +cursiva+","+subrayar+","+nota.getFondoColor()+",'"+nota.getCrearDate()+"','"+nota.getModifDate()+"')");
-            
-            stmt.close();
-            con.close();
-        }catch(SQLException sqle){}
+            Class.forName("com.mysql.jdbc.Driver");
+            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas",user,pass);
+                    Statement stmt = con.createStatement()) {
+                stmt.executeUpdate("INSERT INTO notas (titulo,nota,negrita,cursiva,subrayar,fondoColor,crearDate,modifDate,idUsuario) VALUES ('"+nota.getTitulo()+"','"+nota.getNota()+"',"+nota.isNegrita()+","
+                        +nota.isCursiva()+","+nota.isSubrayar()+","+nota.getFondoColor()+",'"+nota.getCrearDate()+"','"+nota.getModifDate()+"','"+usu.getEmail()+"')");
+            }
+        }catch(SQLException sqle){
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CrearNotas.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return true;
     }
 }
