@@ -5,6 +5,8 @@
  */
 package Vista;
 
+import Datos.Consultar;
+import Datos.Grupo;
 import Datos.Registro;
 import Datos.Usuario;
 import java.awt.CardLayout;
@@ -454,15 +456,11 @@ public class VentanaCrearUsuario extends PanelEsquema
                 break;
             case "Registrate":
                 if (comprobarKeyGroup()) {
-                    for (int i = 0; i < tfContrasenia.getPassword().length; i++) {
-
-                    }
                     char[] arrayLetras = tfContrasenia.getPassword();
                     String contrasenia = "";
                     for (char arrayLetra : arrayLetras) {
                         contrasenia += arrayLetra;
                     }
-                    System.out.println(contrasenia);
                     if (idIcono.equals("")) {
                         iconoError.setText("Error, escoge un icono");
                         this.repaint();
@@ -470,18 +468,41 @@ public class VentanaCrearUsuario extends PanelEsquema
 //                      Encrypt encrp = new Encrypt();
 //                      String contraseniaEncriptada = encrp.getAES(contrasenia);
 //                      System.out.println(contraseniaEncriptada);
-                        Usuario user = new Usuario(tfCorreo.getText(), tfNombre.getText(), contrasenia, tipoUsu, idIcono, tfGrupo.getText());
+                        String correo = String.valueOf(tfCorreo.getText().charAt(0)).toUpperCase() + tfCorreo.getText().substring(1, tfCorreo.getText().length());
+                        Usuario user = null;
                         Registro regis = new Registro();
-                        regis.Registro(user);
-                        frame.remove(this);
-                        frame.add(new VentanaUsuario(frame, user));
-                        frame.setVisible(true);
-                        frame.repaint();
+                        if (radio1.isSelected()) {
+                            if (regis.crearGrupo(tfGrupo.getText(), correo)) {
+                                Consultar consulta = new Consultar();
+                                Grupo grupo = consulta.consultaGrupoNombre(tfGrupo.getText());
+                                if (regis.Registro(user = new Usuario(correo, tfNombre.getText(), contrasenia, tipoUsu, idIcono, grupo.getIdGrupo(), grupo.getNombre()))) {
+                                    frame.remove(this);
+                                    frame.add(new VentanaUsuario(frame, user));
+                                    frame.setVisible(true);
+                                    frame.repaint();
+                                }
+                            }
+                        } else if (radio2.isSelected()) {
+                            String nombreGrupo = tfGrupo.getText().substring(tfGrupo.getText().lastIndexOf("-") + 1, tfGrupo.getText().length());
+                            int id = Integer.valueOf(tfGrupo.getText().substring(0, tfGrupo.getText().lastIndexOf("-")));
+                            Consultar consulta = new Consultar();
+                            Grupo group = consulta.consultaGrupo(id);
+                            if (group.getIdGrupo() != 0) {
+                                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                                user = new Usuario(correo, tfNombre.getText(), contrasenia, tipoUsu, idIcono, id, nombreGrupo);
+                                if (regis.Registro(user)) {
+                                    frame.remove(this);
+                                    frame.add(new VentanaUsuario(frame, user));
+                                    frame.setVisible(true);
+                                    frame.repaint();
+                                }
+                            } else {
+                                lbGrupoError.setText("Error, no existe el grupo");
+                            }
+                        }
                     }
+                    break;
                 }
-                break;
-            default:
-                break;
         }
     }
 
@@ -493,7 +514,6 @@ public class VentanaCrearUsuario extends PanelEsquema
                         me.toString().lastIndexOf(" ") + 1,
                         me.toString().length()
                 );
-                System.out.println(idIcono);
                 if (panelesIconos[i].getName().equals(idIcono)) {
                     panelFormulario.remove(panelLbIcono);
                     panelFormulario.remove(panelErrorIcono);

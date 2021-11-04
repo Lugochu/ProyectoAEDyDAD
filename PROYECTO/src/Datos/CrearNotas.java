@@ -17,13 +17,13 @@ import java.util.logging.Logger;
  * @author eduar
  */
 public class CrearNotas {
-    public boolean crearNota(String user, String pass, Nota nota, Usuario usu){
-        Byte negrita = null;
-        Byte cursiva = null;
-        Byte subrayar = null;
+    private String email="proyectonotas";
+    private String pass="Pantalla1";
+    
+    public boolean crearNota(Nota nota, Usuario usu){
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas",user,pass);
+            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas",email,pass);
                     Statement stmt = con.createStatement()) {
                 stmt.executeUpdate("INSERT INTO notas (titulo,nota,negrita,cursiva,subrayar,fondoColor,crearDate,modifDate,idUsuario) VALUES ('"+nota.getTitulo()+"','"+nota.getNota()+"',"+nota.isNegrita()+","
                         +nota.isCursiva()+","+nota.isSubrayar()+","+nota.getFondoColor()+",'"+nota.getCrearDate()+"','"+nota.getModifDate()+"','"+usu.getEmail()+"')");

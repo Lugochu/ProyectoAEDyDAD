@@ -17,8 +17,10 @@ import java.util.logging.Logger;
  * @author 2damab
  */
 public class Modificar {
-
-    public boolean modificarNota(String email, String pass, Nota nota){
+    private String email="proyectonotas";
+    private String pass="Pantalla1";
+    
+    public boolean modificarNota(Nota nota){
         try {
             Class.forName("com.mysql.jdbc.Driver");
             try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
@@ -38,14 +40,14 @@ public class Modificar {
         return true;
     }
 
-    public boolean modificarUsuario(String email, String pass, Usuario user){
+    public boolean modificarUsuario(Usuario user){
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
             try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass); 
                     Statement stmt = con.createStatement()) {
                 stmt.executeUpdate("UPDATE usuarios SET nombre='" + user.getNombre() + "', pass='" + user.getPass() + "', tipoUser=" + user.getTipoUser() + ", "
-                        + "idIcono='" + user.getIdIcono() + "', keyGrup='" + user.getKeyGrup() + "' WHERE email='" + user.getEmail() + "'");
+                        + "idIcono='" + user.getIdIcono() + "', keyGrup='" + user.getNombreGroup() + "' WHERE email='" + user.getEmail() + "'");
                 
             }
 
@@ -57,7 +59,7 @@ public class Modificar {
         return true;
     }
 
-    public boolean modificarEmail(String email, String pass, Usuario user){
+    public boolean modificarEmail(Usuario user){
 
         try {
             Class.forName("com.mysql.jdbc.Driver");

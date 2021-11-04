@@ -21,17 +21,16 @@ import java.util.logging.Logger;
  */
 public class Consultar {
 
-    public ArrayList<Nota> consultarNotas(String email, String pass, Usuario user) {
+    private String email = "proyectonotas";
+    private String pass = "Pantalla1";
+
+    public ArrayList<Nota> consultarNotas(Usuario user) {
         ArrayList<Nota> list = new ArrayList();
         int idNota;
-        String titulo;
-        String nota;
-        boolean negrita;
-        boolean cursiva;
-        boolean subrayar;
+        String titulo, nota;
+        boolean negrita, cursiva, subrayar;
         int fondoColor;
-        Date crearDate;
-        Date modifDate;
+        Date crearDate, modifDate;
         String idUsuario;
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -61,18 +60,14 @@ public class Consultar {
         return list;
     }
 
-    public Nota consultarNota(String email, String pass, int idNotaBuscar) {
+    public Nota consultarNota(int idNotaBuscar) {
         int idNota;
-        String titulo;
-        String nota;
-        boolean negrita;
-        boolean cursiva;
-        boolean subrayar;
+        String titulo, nota;
+        boolean negrita, cursiva, subrayar;
         int fondoColor;
-        Date crearDate;
-        Date modifDate;
+        Date crearDate, modifDate;
         String idUsuario;
-        Nota notaCorrecta=null;
+        Nota notaCorrecta = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
@@ -101,13 +96,20 @@ public class Consultar {
         return notaCorrecta;
     }
 
-    public Usuario consultarUsuario(String email, String pass) {
+    public Usuario consultarUsuario(String emailUsuario) {
         Usuario user = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass); Statement stmt = con.createStatement(); ResultSet res = stmt.executeQuery("SELECT * FROM usuarios WHERE email='" + email + "'")) {
+            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
+                    Statement stmt = con.createStatement();
+                    ResultSet res = stmt.executeQuery("SELECT * FROM usuarios WHERE email='" + emailUsuario + "'")) {
                 while (res.next()) {
-                    user = new Usuario(res.getString("email"), res.getString("nombre"), res.getString("idIcono"), res.getByte("tipoUser"), res.getString("idIcono"), res.getString("keyGrup"));
+                    user = new Usuario(res.getString("email"),
+                            res.getString("nombre"),
+                            res.getString("idIcono"),
+                            res.getByte("tipoUser"),
+                            res.getString("idIcono"),
+                            res.getString("keyGrup"));
                 }
             }
 
@@ -119,31 +121,79 @@ public class Consultar {
         return user;
     }
 
-    /*public int consultaGrupo(String email, String pass) throws ClassNotFoundException {
+    public Grupo consultaGrupo(int idGrupo) {
+        Grupo group;
         int idgrupo = 0;
+        String nombre = "";
+        String emailOwner = "";
+
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
-            Statement stmt = con.createStatement();
-            ResultSet res = stmt.executeQuery("SELECT * FROM grupo WHERE email='" + email + "'");
-            idgrupo = res.getInt("idgrupo");
-            res.close();
-            stmt.close();
-            con.close();
+            Class.forName("com.mysql.jdbc.Driver");
+            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
+                    Statement stmt = con.createStatement();
+                    ResultSet res = stmt.executeQuery("SELECT * FROM grupo WHERE idGrupo=" + idGrupo)) {
+                while (res.next()) {
+                    idgrupo = res.getInt("idgrupo");
+                    nombre = res.getString("nombre");
+                    emailOwner = res.getString("emailOwner");
+                }
+                return group = new Grupo(idgrupo, nombre, emailOwner);
+            }
 
         } catch (SQLException sqle) {
+            System.out.println(sqle.getMessage());
+            return null;
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Consultar.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
-        return idgrupo;
-    }*/
-    public ArrayList<Usuario> consultaUsuariosGrupo(String email, String pass, String keyGroup) {
+    }
+
+    public Grupo consultaGrupoNombre(String nombreGrupo) {
+        Grupo group;
+        int idgrupo = 0;
+        String nombre = "";
+        String emailOwner = "";
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
+                    Statement stmt = con.createStatement();
+                    ResultSet res = stmt.executeQuery("SELECT * FROM grupo WHERE nombre='" + nombreGrupo+"'")) {
+                while (res.next()) {
+                    idgrupo = res.getInt("idgrupo");
+                    nombre = res.getString("nombre");
+                    emailOwner = res.getString("emailOwner");
+                }
+                return group = new Grupo(idgrupo, nombre, emailOwner);
+            }
+
+        } catch (SQLException sqle) {
+            System.out.println(sqle.getMessage());
+            return null;
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Consultar.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public ArrayList<Usuario> consultaUsuariosGrupo(int idGrupo) {
 
         ArrayList<Usuario> list = new ArrayList();
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass); Statement stmt = con.createStatement(); ResultSet res = stmt.executeQuery("SELECT * FROM usuarios WHERE keyGroup='" + keyGroup + "'")) {
+            try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyectonotas", email, pass);
+                    Statement stmt = con.createStatement();
+                    ResultSet res = stmt.executeQuery("SELECT * FROM usuarios WHERE keyGroup=" + idGrupo)) {
                 while (res.next()) {
-                    list.add(new Usuario(res.getString("email"), res.getString("nombre"), res.getString("pass"), res.getByte("tipoUser"), res.getString("idIcono"), res.getString("keyGroup")));
+                    list.add(new Usuario(res.getString("email"),
+                            res.getString("nombre"),
+                            res.getString("pass"),
+                            res.getInt("tipoUser"),
+                            res.getString("idIcono"),
+                            res.getInt("keyGroup"),
+                            res.getString("nombreGroup")));
                 }
             }
 

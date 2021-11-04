@@ -6,14 +6,11 @@
 package Vista;
 
 import Datos.Consultar;
-import Datos.Nota;
 import Datos.Usuario;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -22,12 +19,10 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 /**
@@ -40,56 +35,57 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
     private FramePrincipal frame;
     private Usuario user;
     private ArrayList<Usuario> usuarios;
-
-    private final Color amarillo = new Color(247, 243, 146);
-    private final Color amarilloOscuro = new Color(236, 232, 117);
-
-    private final Color verde = new Color(207, 248, 172);
-    private final Color verdeOscuro = new Color(179, 232, 134);
-
-    private final Color azul = new Color(187, 207, 242);
-    private final Color azulOscuro = new Color(152, 180, 228);
-
-    private final Color rosa = new Color(242, 182, 234);
-    private final Color rosaOscuro = new Color(228, 154, 218);
-
     private String rutaIconoUser = "src/imagenes/";
 
     public VentanaUsuario(FramePrincipal frame, Usuario user) {
         super();
         this.frame = frame;
         this.user = user;
-        Consultar consulta = new Consultar();
-
-        usuarios = consulta.consultaUsuariosGrupo("root", "Pantalla1", user.getKeyGrup());
-        for (Usuario usuario : usuarios) {
-            System.out.println(usuario.toString());
+        this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        if (user.getTipoUser()) {
+            Consultar consulta = new Consultar();
+            usuarios = consulta.consultaUsuariosGrupo(user.getIdGroup());
+            add(panelCentro(0), "Center");
+        } else {
+            add(panelCentro(1), "Center");
         }
         add(panelNorteUsuarios(), "North");
-        add(panelCentro(), "Center");
-
     }
 
     public JPanel panelNorteUsuarios() {
         panelNorte = super.getPanelNorte();
         panelNorte.setLayout(new BorderLayout());
+//<editor-fold defaultstate="collapsed" desc="icono">
         JPanel panelNorteIconos = new JPanel();
         panelNorteIconos.setLayout(new FlowLayout(1, 20, 20));
         panelNorteIconos.setOpaque(false);
-
-        JButton boton = new JButton();
+        JButton botonIcono = new JButton();
         ImageIcon img = new ImageIcon(rutaIconoUser + user.getIdIcono() + ".png");
-        boton.setBorder(BorderFactory.createEmptyBorder());
-        boton.setContentAreaFilled(false);
-        boton.setIcon(img);
-        boton.addActionListener(this);
-        panelNorteIconos.add(boton);
+        botonIcono.setBorder(BorderFactory.createEmptyBorder());
+        botonIcono.setContentAreaFilled(false);
+        botonIcono.setIcon(img);
+        botonIcono.addActionListener(this);
+        panelNorteIconos.add(botonIcono);
         panelNorte.add(panelNorteIconos, "East");
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Boton grafica">
+        JPanel panelNorteBotones = new JPanel();
+        panelNorteBotones.setLayout(new FlowLayout(1, 20, 20));
+        panelNorteBotones.setOpaque(false);
+        JButton botonGrafica = new JButton("Generar grafico");
+        botonGrafica.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
 
+            }
+        });
+        panelNorteBotones.add(botonGrafica);
+        panelNorte.add(panelNorteBotones, "West");
+//</editor-fold>
         return panelNorte;
     }
 
-    public JPanel panelCentro() {
+    public JPanel panelCentro(int op) {
 
         JPanel panelCentro = new JPanel();
         panelCentro.setLayout(new CardLayout());
@@ -102,16 +98,47 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
         UIManager.put("TabbedPane.contentOpaque", false);
         JTabbedPane panelPestanias = new JTabbedPane();
-        for (Usuario usuario : usuarios) {
-            panelPestanias.addTab(usuario.getNombre(), null, new PestaniaUsuario(frame, usuario), null);
+        if (user.getTipoUser()) {
+            if (!usuarios.isEmpty()) {
+                for (Usuario usuario : usuarios) {
+                    PestaniaUsuario pestania = new PestaniaUsuario(frame, usuario);
+                    pestania.setName(usuario.getEmail());
+                    JScrollPane scroll = new JScrollPane(pestania,
+                            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                    scroll.setOpaque(false);
+                    scroll.getViewport().setOpaque(false);
+                    scroll.getVerticalScrollBar().setUnitIncrement(16);
+                    panelPestanias.addTab(usuario.getNombre(), null, scroll, null);
+                    panelCentro.add(panelPestanias);
+                }
+            } else {
+                PestaniaUsuario pestania = new PestaniaUsuario(frame, user);
+                pestania.setName(user.getEmail());
+                JScrollPane scroll = new JScrollPane(pestania,
+                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                scroll.setOpaque(false);
+                scroll.getViewport().setOpaque(false);
+
+                scroll.getVerticalScrollBar().setUnitIncrement(16);
+                panelPestanias.addTab(user.getNombre(), null, scroll, null);
+                panelCentro.add(panelPestanias);
+            }
+
+        } else {
+            PestaniaUsuario pestania = new PestaniaUsuario(frame, user);
+            panelCentro.add(pestania);
         }
-        panelCentro.add(panelPestanias);
         return panelCentro;
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        System.out.println("AAAAAAA");
+        frame.remove(this);
+        frame.add(new VentanaConfiguracionUsuario(frame, user));
+        frame.setVisible(true);
+        frame.repaint();
     }
 
     @Override
@@ -120,21 +147,17 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
     @Override
     public void mousePressed(MouseEvent me) {
-
     }
 
     @Override
     public void mouseReleased(MouseEvent me) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseEntered(MouseEvent me) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseExited(MouseEvent me) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

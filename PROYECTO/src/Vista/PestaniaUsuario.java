@@ -5,14 +5,22 @@ import Datos.CrearNotas;
 import Datos.Modificar;
 import Datos.Nota;
 import Datos.Usuario;
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Paint;
+import java.awt.RenderingHints;
 import java.awt.event.*;
+import java.awt.geom.RoundRectangle2D;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -26,6 +34,7 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
     private JFrame frame;
     private Usuario user;
     private ArrayList<Nota> notas;
+    private int altura;
 
     private final Color amarillo = new Color(247, 243, 146);
     private final Color amarilloOscuro = new Color(236, 232, 117);
@@ -42,23 +51,31 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
     public PestaniaUsuario(JFrame frame, Usuario user) {
         this.frame = frame;
         this.user = user;
-        initComponents();
         addMenuEmergente();
-        addEventos(new ControladorMenus(this));
+        addEventos(new ControladorMenus());
         iniciarMiniaturas();
+        initComponents();
     }
 
     public void iniciarMiniaturas() {
         this.removeAll();
         Consultar consulta = new Consultar();
-        notas = consulta.consultarNotas("root", "Pantalla1", this.user);
-
-        for (Nota nota : notas) {
-
-            this.add(panelPosItMiniatura(nota.getTitulo(), nota.getNota(), comprobarColor(nota.getFondoColor()), nota.getIdNota()));
-            System.out.println(nota.toString());
+        notas = consulta.consultarNotas(this.user);
+        if (!notas.isEmpty()) {
+            this.altura = (int) (notas.size() / 5) * 500;
+            for (Nota nota : notas) {
+                PanelMiniaturas panelRedondeado = new PanelMiniaturas(nota.getTitulo(), nota.getNota(), comprobarColor(nota.getFondoColor()), nota.getIdNota());
+                panelRedondeado.addMouseListener(this);
+                panelRedondeado.getNota().addMouseListener(this);
+                this.add(panelRedondeado);
+            }
+        } else {
+            JLabel etiqueta = new JLabel("Haz click derecho para crear tu primera nota");
+            etiqueta.setFont(new Font("Roboto", Font.PLAIN, 30));
+            etiqueta.setForeground(Color.white);
+            this.add(etiqueta);
         }
-        this.repaint();
+        this.updateUI();
     }
 
     private final void addEventos(ControladorMenus controlador) {
@@ -91,151 +108,220 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
         this.setComponentPopupMenu(menuEmergente);
     }
 
-    public JPanel panelPosItMiniatura(String tituloStr, String notaStr, Color[] colores, int idNota) {
-        JPanel panelPosIt = new JPanel();
-        JPanel panelPosItNorte = new JPanel();
-        JPanel panelPosItCentro = new JPanel();
+    public class PanelMiniaturas extends JPanel {
 
-        tituloStr = tituloStr.toUpperCase();
-        JLabel titulo = new JLabel(tituloStr);
-        titulo.setForeground(Color.white);
+        private int arcw = 40;
+        private int arch = 40;
+        private Color[] colores;
+        private String tituloStr;
+        private String notaStr;
+        private int idNota;
+        private JTextArea nota;
 
-        JTextArea nota = new JTextArea(notaStr);
+        public PanelMiniaturas(String tituloStr, String notaStr, Color[] colores, int idNota) {
+            super();
 
-        nota.setLineWrap(true);
-        nota.setLayout(new GridLayout());
-        nota.setName(String.valueOf(idNota));
-        nota.addMouseListener(this);
-        nota.setEditable(false);
-        nota.setBackground(colores[1]);
+            this.colores = colores;
+            this.tituloStr = tituloStr;
+            this.notaStr = notaStr;
+            this.idNota = idNota;
 
-        panelPosIt.setPreferredSize(new Dimension(320, 300));
-        panelPosItNorte.setPreferredSize(new Dimension(0, 50));
+            this.setOpaque(false);
+            this.setPreferredSize(new Dimension(320, 300));
+            this.setLayout(new BorderLayout());
+            this.setName(String.valueOf(idNota));
+            this.add(panelPosItNorte(), "North");
+            this.add(panelPosItCentro(), "Center");
+        }
 
-        panelPosItNorte.setBackground(colores[0]);
-        panelPosItNorte.add(titulo);
-        panelPosItCentro.setBackground(colores[1]);
-        panelPosItCentro.add(nota);
-        panelPosItCentro.setLayout(new CardLayout(20, 10));
+        public JPanel panelPosItNorte() {
+            JPanel panelPosItNorte = new JPanel();
+            panelPosItNorte.setPreferredSize(new Dimension(0, 50));
+            panelPosItNorte.setBackground(colores[0]);
 
-        panelPosIt.setLayout(new BorderLayout());
-        panelPosIt.add(panelPosItNorte, "North");
-        panelPosIt.add(panelPosItCentro, "Center");
-        panelPosIt.setName(String.valueOf(idNota));
-        panelPosIt.addMouseListener(this);
-        return panelPosIt;
+            tituloStr = tituloStr.toUpperCase();
+            JLabel titulo = new JLabel(tituloStr);
+            titulo.setForeground(Color.white);
+
+            panelPosItNorte.add(titulo);
+            return panelPosItNorte;
+        }
+
+        public JPanel panelPosItCentro() {
+            JPanel panelPosItCentro = new JPanel();
+            nota = new JTextArea(notaStr);
+            nota.setLineWrap(true);
+            nota.setLayout(new GridLayout());
+            nota.setName(String.valueOf(idNota));
+            nota.setEditable(false);
+            nota.setBackground(colores[1]);
+
+            panelPosItCentro.setBackground(colores[1]);
+            panelPosItCentro.add(nota);
+            panelPosItCentro.setLayout(new CardLayout(20, 10));
+            return panelPosItCentro;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+            Paint oldPaint = g2.getPaint();
+            RoundRectangle2D.Float r2d = new RoundRectangle2D.Float(
+                    0, 0, getWidth(), getHeight() - 1, getArcw(), getArch());
+
+            g2.clip(r2d);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.setStroke(new BasicStroke(4f));
+            g2.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 2, 18, 18);
+
+            g2.setPaint(oldPaint);
+            super.paintComponent(g);
+        }
+
+        public int getArcw() {
+            return arcw;
+        }
+
+        public void setArcw(int arcw) {
+            this.arcw = arcw;
+        }
+
+        public int getArch() {
+            return arch;
+        }
+
+        public void setArch(int arch) {
+            this.arch = arch;
+        }
+
+        public JTextArea getNota() {
+            return nota;
+        }
+
     }
 
-    public void panelEditarPosIt(String tituloStr, String notaStr, Color[] colores, Nota notaAEditar) {
-        JDialog panelPosItModal = new JDialog(frame, tituloStr);
+    public class PanelPosIt extends JDialog {
 
-        JPanel panelPosItNorte = new JPanel();
-        JPanel panelPosItCentro = new JPanel();
-        JPanel panelPosItSur = new JPanel();
+        private String tituloStr;
+        private String notaStr;
+        private Color[] colores;
+        private Nota notaAEditar;
+        private JTextArea titulo;
+        private JTextArea nota;
+        private int opco;
 
-        panelPosItNorte.setPreferredSize(new Dimension(0, 50));
-        panelPosItNorte.setBackground(colores[0]);
-        tituloStr = tituloStr.toUpperCase();
-        JTextArea titulo = new JTextArea(tituloStr);
-        titulo.setOpaque(false);
+        public PanelPosIt(Color[] colores, int opco) {
+            super();
+            this.colores = colores;
+            this.opco = opco;
 
-        titulo.setForeground(Color.white);
-        panelPosItNorte.add(titulo);
+            this.setLayout(new BorderLayout());
+            this.setPreferredSize(new Dimension(400, 500));
+            this.add(panelPosItNorte(1), "North");
+            this.add(panelPosItCentro(1), "Center");
+            this.add(panelPosItSur(1, this), "South");
+            this.setLocationRelativeTo(null);
+            this.pack();
+            this.setVisible(true);
+        }
 
-        panelPosItCentro.setBackground(colores[1]);
-        panelPosItCentro.setLayout(new CardLayout(20, 10));
-        JTextArea nota = new JTextArea(notaStr);
+        public PanelPosIt(String tituloStr, String notaStr, Color[] colores, Nota notaAEditar) {
+            super();
+            this.tituloStr = tituloStr;
+            this.notaStr = notaStr;
+            this.colores = colores;
+            this.notaAEditar = notaAEditar;
 
-        nota.setLineWrap(true);
-        nota.setLayout(new GridLayout());
-        nota.setName(String.valueOf(notaAEditar.getIdNota()));
-        nota.setBackground(colores[1]);
-        panelPosItCentro.add(nota);
-        JCheckBox negrita = new JCheckBox();
-        JCheckBox cursiva = new JCheckBox();
-        JCheckBox subrayada = new JCheckBox();
-        panelPosItSur.add(negrita);
-        panelPosItSur.add(cursiva);
-        panelPosItSur.add(subrayada);
-        JButton boton = new JButton("Actualizar");
-        boton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                Modificar modificar = new Modificar();
-                notaAEditar.setNota(nota.getText());
-                notaAEditar.setTitulo(titulo.getText());
-                boolean prueba = modificar.modificarNota("root", "Pantalla1", notaAEditar);
-                if (prueba) {
-                    panelPosItModal.setVisible(false);
-                    iniciarMiniaturas();
-                }
+            this.setLayout(new BorderLayout());
+            this.setPreferredSize(new Dimension(400, 500));
+            this.add(panelPosItNorte(0), "North");
+            this.add(panelPosItCentro(0), "Center");
+            this.add(panelPosItSur(0, this), "South");
+            this.setLocationRelativeTo(null);
+            this.pack();
+            this.setVisible(true);
+        }
+
+        public JPanel panelPosItNorte(int op) {
+            JPanel panelPosItNorte = new JPanel();
+            panelPosItNorte.setPreferredSize(new Dimension(0, 50));
+            panelPosItNorte.setBackground(colores[0]);
+            if (op == 0) {
+                tituloStr = tituloStr.toUpperCase();
+                titulo = new JTextArea(tituloStr);
+            } else {
+                titulo = new JTextArea(" ");
             }
-        });
-        panelPosItSur.add(boton);
+            titulo.setOpaque(false);
+            titulo.setForeground(Color.white);
+            panelPosItNorte.add(titulo);
+            return panelPosItNorte;
+        }
 
-        JPanel panelPosIt = new JPanel();
-        panelPosIt.setPreferredSize(new Dimension(400, 500));
-        panelPosIt.setLayout(new BorderLayout());
-        panelPosIt.add(panelPosItNorte, "North");
-        panelPosIt.add(panelPosItCentro, "Center");
-        panelPosIt.add(panelPosItSur, "South");
-        panelPosItModal.add(panelPosIt);
-        panelPosItModal.setLocationRelativeTo(null);
-        panelPosItModal.pack();
-        panelPosItModal.setVisible(true);
-    }
-
-    public void panelCrearPosIt(Color[] colores, int opco) {
-        JDialog panelPosItModal = new JDialog(frame);
-
-        JPanel panelPosItNorte = new JPanel();
-        JPanel panelPosItCentro = new JPanel();
-        JPanel panelPosItSur = new JPanel();
-
-        panelPosItNorte.setPreferredSize(new Dimension(0, 50));
-        panelPosItNorte.setBackground(colores[0]);
-        panelPosItCentro.setBackground(colores[1]);
-        panelPosItCentro.setLayout(new CardLayout(20, 10));
-        JTextArea titulo = new JTextArea(" ");
-        titulo.setOpaque(false);
-        titulo.setForeground(Color.white);
-        panelPosItNorte.add(titulo);
-
-        JTextArea nota = new JTextArea(" ");
-        nota.setLineWrap(true);
-        nota.setLayout(new GridLayout());
-        nota.setBackground(colores[1]);
-        panelPosItCentro.add(nota);
-        JCheckBox negrita = new JCheckBox();
-        JCheckBox cursiva = new JCheckBox();
-        JCheckBox subrayada = new JCheckBox();
-        panelPosItSur.add(negrita);
-        panelPosItSur.add(cursiva);
-        panelPosItSur.add(subrayada);
-        JButton boton = new JButton("Guardar");
-        boton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                Nota notaACrear = new Nota(titulo.getText(),nota.getText(),negrita.isSelected(),cursiva.isSelected(),subrayada.isSelected(),opco,new Date(2021,11,1),new Date(2021,11,1),user.getEmail());
-                CrearNotas crearNotas = new CrearNotas();
-                boolean prueba = crearNotas.crearNota("root", "Pantalla1", notaACrear,user);
-                if (prueba) {
-                    panelPosItModal.setVisible(false);
-                    iniciarMiniaturas();
-                }
+        public JPanel panelPosItCentro(int op) {
+            JPanel panelPosItCentro = new JPanel();
+            panelPosItCentro.setBackground(colores[1]);
+            panelPosItCentro.setLayout(new CardLayout(20, 10));
+            if (op == 0) {
+                nota = new JTextArea(notaStr);
+                nota.setName(String.valueOf(notaAEditar.getIdNota()));
+            } else {
+                nota = new JTextArea(" ");
             }
-        });
-        panelPosItSur.add(boton);
-        JPanel panelPosIt = new JPanel();
-        panelPosIt.setPreferredSize(new Dimension(400, 500));
-        panelPosIt.setLayout(new BorderLayout());
-        panelPosIt.add(panelPosItNorte, "North");
-        panelPosIt.add(panelPosItCentro, "Center");
-        panelPosIt.add(panelPosItSur, "South");
-        panelPosItModal.add(panelPosIt);
-        panelPosItModal.setLocationRelativeTo(null);
-        panelPosItModal.pack();
-        panelPosItModal.setVisible(true);
+            nota.setLineWrap(true);
+            nota.setLayout(new GridLayout());
+            nota.setBackground(colores[1]);
+            panelPosItCentro.add(nota);
+            return panelPosItCentro;
+        }
+
+        public JPanel panelPosItSur(int op, JDialog padre) {
+            JPanel panelPosItSur = new JPanel();
+            JCheckBox negrita = new JCheckBox();
+            JCheckBox cursiva = new JCheckBox();
+            JCheckBox subrayada = new JCheckBox();
+            panelPosItSur.add(negrita);
+            panelPosItSur.add(cursiva);
+            panelPosItSur.add(subrayada);
+            JButton boton = new JButton();
+
+            if (op == 0) {
+                boton.setText("Actualizar");
+                boton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        Modificar modificar = new Modificar();
+                        notaAEditar.setNota(nota.getText());
+                        notaAEditar.setTitulo(titulo.getText());
+                        boolean prueba = modificar.modificarNota(notaAEditar);
+                        if (prueba) {
+                            padre.setVisible(false);
+                            iniciarMiniaturas();
+                        }
+                    }
+                });
+            } else {
+                boton.setText("Crear");
+                boton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        Nota notaACrear = new Nota(titulo.getText(), nota.getText(), negrita.isSelected(), cursiva.isSelected(), subrayada.isSelected(), opco, new Date(LocalDateTime.now().getMonth().getValue(), LocalDateTime.now().getMonth().getValue(), LocalDateTime.now().getMonth().getValue()), new Date(2021, 11, 1), user.getEmail());
+                        CrearNotas crearNotas = new CrearNotas();
+                        boolean prueba = crearNotas.crearNota(notaACrear, user);
+                        if (prueba) {
+                            padre.setVisible(false);
+                            iniciarMiniaturas();
+                        }
+                    }
+                });
+            }
+
+            panelPosItSur.add(boton);
+            return panelPosItSur;
+        }
     }
 
     public Color[] comprobarColor(int numColor) {
@@ -261,6 +347,29 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
         return color;
     }
 
+    private class ControladorMenus implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "Amarillo":
+                    new PanelPosIt(comprobarColor(0), 0);
+                    break;
+                case "Verde":
+                    new PanelPosIt(comprobarColor(1), 1);
+                    break;
+                case "Azul":
+                    new PanelPosIt(comprobarColor(2), 2);
+                    break;
+                case "Rosa":
+                    new PanelPosIt(comprobarColor(3), 3);
+                    break;
+                case "Actualizar":
+                    break;
+            }
+        }
+    }
+
     @Override
     public void mouseClicked(MouseEvent me) {
     }
@@ -270,8 +379,9 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
         if (me.getClickCount() == 2) {
             String idNota = me.toString().substring(me.toString().lastIndexOf(" ") + 1, me.toString().length());
             Consultar consulta = new Consultar();
-            Nota nota = consulta.consultarNota("root", "Pantalla1", Integer.valueOf(idNota));
-            panelEditarPosIt(nota.getTitulo(), nota.getNota(), comprobarColor(nota.getFondoColor()), nota);
+            Nota nota = consulta.consultarNota(Integer.valueOf(idNota));
+            new PanelPosIt(nota.getTitulo(), nota.getNota(), comprobarColor(nota.getFondoColor()), nota);
+            this.repaint();
         }
     }
 
@@ -287,39 +397,11 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent me) {
     }
 
-    private class ControladorMenus implements ActionListener {
-
-        private JPanel panel;
-
-        public ControladorMenus(JPanel panel) {
-            this.panel = panel;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            switch (e.getActionCommand()) {
-                case "Amarillo":
-                    panelCrearPosIt(comprobarColor(0),0);
-                    break;
-                case "Verde":
-                    panelCrearPosIt(comprobarColor(1),1);
-                    break;
-                case "Azul":
-                    panelCrearPosIt(comprobarColor(2),2);
-                    break;
-                case "Rosa":
-                    panelCrearPosIt(comprobarColor(3),3);
-                    break;
-                case "Actualizar":
-                    break;
-            }
-        }
-
-    }
-
     private void initComponents() {
         setOpaque(false);
-        setLayout(new FlowLayout(3, 50, 50));
+        setLayout(new FlowLayout(1, 50, 50));
+        setPreferredSize(new Dimension(frame.getWidth(), altura));
+
     }
 
 }

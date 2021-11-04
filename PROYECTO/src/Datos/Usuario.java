@@ -16,19 +16,33 @@ public class Usuario {
     private String pass;
     private boolean tipoUser;
     private String idIcono;
-    private String keyGrup;
-
-    public Usuario(String email, String nombre, String pass, int tipoUser, String idIcono, String keyGrup) {
+    private int idGroup;
+    private String nombreGroup;
+    
+    public Usuario(String email, String nombre, String pass, int tipoUser, String idIcono,String nombreGroup) {
         this.email = email;
         this.nombre = nombre;
         this.pass = pass;
         if (tipoUser == 0) {
             this.tipoUser = false;
-        } else if(tipoUser == 1) {
+        } else if (tipoUser == 1) {
             this.tipoUser = true;
         }
         this.idIcono = idIcono;
-        this.keyGrup = keyGrup;
+        this.nombreGroup = nombreGroup;
+    }
+    public Usuario(String email, String nombre, String pass, int tipoUser, String idIcono, int idGroup, String nombreGroup) {
+        this.email = email;
+        this.nombre = nombre;
+        this.pass = pass;
+        if (tipoUser == 0) {
+            this.tipoUser = false;
+        } else if (tipoUser == 1) {
+            this.tipoUser = true;
+        }
+        this.idIcono = idIcono;
+        this.idGroup = idGroup;
+        this.nombreGroup = nombreGroup;
     }
 
     public Usuario() {
@@ -79,17 +93,20 @@ public class Usuario {
         this.idIcono = idIcono;
     }
 
-    public String getKeyGrup() {
-        return keyGrup;
+    public int getIdGroup() {
+        return idGroup;
     }
 
-    public void setKeyGrup(String keyGrup) {
-        this.keyGrup = keyGrup;
+    public void setIdGroup(int idGroup) {
+        this.idGroup = idGroup;
     }
 
-    @Override
-    public String toString() {
-        return "Usuario{" + "email=" + email + ", nombre=" + nombre + ", pass=" + pass + ", tipoUser=" + tipoUser + ", idIcono=" + idIcono + ", keyGrup=" + keyGrup + '}';
+    public String getNombreGroup() {
+        return nombreGroup;
+    }
+
+    public void setNombreGroup(String nombreGroup) {
+        this.nombreGroup = nombreGroup;
     }
 
 }

@@ -93,7 +93,7 @@ public class InicioSesion {
                     user1.setPass(res.getString("pass"));
                     user1.setTipoUser(res.getInt("tipoUser"));
                     user1.setIdIcono(res.getString("idIcono"));
-                    user1.setKeyGrup(res.getString("keyGroup"));
+                    user1.setNombreGroup(res.getString("keyGroup"));
                 }
             }
 

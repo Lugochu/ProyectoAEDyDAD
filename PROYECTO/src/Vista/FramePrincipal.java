@@ -18,8 +18,7 @@ import javax.swing.JPanel;
  * @author Lugo
  */
 public class FramePrincipal extends JFrame {
-    private String rutaImagenBackgroud="/imagenes/degradadoFrame.jpg";
-    private FondoPanel fondo = new FondoPanel(rutaImagenBackgroud);
+    private FondoPanel fondo = new FondoPanel("/imagenes/degradadoFrame.jpg");
 
     public FramePrincipal() {
         initComponents();
@@ -35,6 +34,7 @@ public class FramePrincipal extends JFrame {
         Dimension pantalla = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         //DARLE UNA MEDIDA Y COLOCARLO EN EL CENTRO DE LA PANTALLA
         setPreferredSize(new Dimension((int) (pantalla.getWidth() / 2), (int) (pantalla.getHeight() / 2)));
+        setMaximumSize(pantalla);
         pack();
         setLocationRelativeTo(null);
         setResizable(true);

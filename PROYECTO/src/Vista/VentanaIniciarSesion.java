@@ -94,7 +94,6 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
             char[] arrayLetras = tfContrasenia.getPassword();
             String contrasenia = "";
             String correo = String.valueOf(tfCorreo.getText().charAt(0)).toUpperCase() + tfCorreo.getText().substring(1, tfCorreo.getText().length());
-            System.out.println(correo);
             for (char arrayLetra : arrayLetras) {
                 contrasenia += arrayLetra;
             }
@@ -102,7 +101,6 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
                 frame.remove(this);
                 Usuario usu = new Usuario();
                 usu = is.objUsuario(tfCorreo.getText(), contrasenia);
-                System.out.println(usu.toString());
                 frame.add(new VentanaUsuario(frame, usu));
                 frame.setVisible(true);
             } else {
