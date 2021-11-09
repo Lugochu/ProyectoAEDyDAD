@@ -5,7 +5,7 @@
  */
 package Vista;
 
-import Datos.Usuario;
+import ObjetosBD.Usuario;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;

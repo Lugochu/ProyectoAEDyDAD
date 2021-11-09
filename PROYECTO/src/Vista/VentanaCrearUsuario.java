@@ -5,10 +5,10 @@
  */
 package Vista;
 
-import Datos.Consultar;
-import Datos.Grupo;
-import Datos.Registro;
-import Datos.Usuario;
+import BD_Manager.Consultar;
+import ObjetosBD.Grupo;
+import BD_Manager.Registro;
+import ObjetosBD.Usuario;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -465,9 +465,6 @@ public class VentanaCrearUsuario extends PanelEsquema
                         iconoError.setText("Error, escoge un icono");
                         this.repaint();
                     } else {
-//                      Encrypt encrp = new Encrypt();
-//                      String contraseniaEncriptada = encrp.getAES(contrasenia);
-//                      System.out.println(contraseniaEncriptada);
                         String correo = String.valueOf(tfCorreo.getText().charAt(0)).toUpperCase() + tfCorreo.getText().substring(1, tfCorreo.getText().length());
                         Usuario user = null;
                         Registro regis = new Registro();
@@ -488,7 +485,6 @@ public class VentanaCrearUsuario extends PanelEsquema
                             Consultar consulta = new Consultar();
                             Grupo group = consulta.consultaGrupo(id);
                             if (group.getIdGrupo() != 0) {
-                                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                                 user = new Usuario(correo, tfNombre.getText(), contrasenia, tipoUsu, idIcono, id, nombreGrupo);
                                 if (regis.Registro(user)) {
                                     frame.remove(this);

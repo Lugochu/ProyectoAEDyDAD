@@ -1,10 +1,10 @@
 package Vista;
 
-import Datos.Consultar;
-import Datos.CrearNotas;
-import Datos.Modificar;
-import Datos.Nota;
-import Datos.Usuario;
+import BD_Manager.Consultar;
+import BD_Manager.CrearNotas;
+import BD_Manager.Modificar;
+import ObjetosBD.Nota;
+import ObjetosBD.Usuario;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -19,10 +19,14 @@ import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PestaniaUsuario extends JPanel implements MouseListener {
 
@@ -219,7 +223,7 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
             this.opco = opco;
 
             this.setLayout(new BorderLayout());
-            this.setPreferredSize(new Dimension(400, 500));
+            this.setPreferredSize(new Dimension(500, 600));
             this.add(panelPosItNorte(1), "North");
             this.add(panelPosItCentro(1), "Center");
             this.add(panelPosItSur(1, this), "South");
@@ -236,7 +240,8 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
             this.notaAEditar = notaAEditar;
 
             this.setLayout(new BorderLayout());
-            this.setPreferredSize(new Dimension(400, 500));
+            this.setPreferredSize(new Dimension(500, 600));
+            this.setResizable(false);
             this.add(panelPosItNorte(0), "North");
             this.add(panelPosItCentro(0), "Center");
             this.add(panelPosItSur(0, this), "South");
@@ -280,12 +285,14 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
 
         public JPanel panelPosItSur(int op, JDialog padre) {
             JPanel panelPosItSur = new JPanel();
-            JCheckBox negrita = new JCheckBox();
-            JCheckBox cursiva = new JCheckBox();
-            JCheckBox subrayada = new JCheckBox();
-            panelPosItSur.add(negrita);
-            panelPosItSur.add(cursiva);
-            panelPosItSur.add(subrayada);
+            JPanel panelPosItSurCheckBox = new JPanel();
+
+            JCheckBox negrita = new JCheckBox("Negrita");
+            JCheckBox cursiva = new JCheckBox("Cursiva");
+            JCheckBox subrayada = new JCheckBox("Subrayada");
+            panelPosItSurCheckBox.add(negrita);
+            panelPosItSurCheckBox.add(cursiva);
+            panelPosItSurCheckBox.add(subrayada);
             JButton boton = new JButton();
 
             if (op == 0) {
@@ -317,8 +324,29 @@ public class PestaniaUsuario extends JPanel implements MouseListener {
                         }
                     }
                 });
-            }
 
+            }
+            JButton botonGuardar = new JButton("Guardar en txt");
+            botonGuardar.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JFileChooser filesave = new JFileChooser();
+                    filesave.addChoosableFileFilter(new FileNameExtensionFilter("*.txt", "txt"));
+                    int returnVal = filesave.showSaveDialog(botonGuardar);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        try {
+                            File file = filesave.getSelectedFile();
+                            PrintWriter os = new PrintWriter(file);
+                            os.print("TITULO: \n" + titulo.getText());
+                            os.print("NOTA: \n" + nota.getText());
+                            os.close();
+                        } catch (IOException e1) {
+                        }
+                    }
+                }
+            });
+            panelPosItSur.add(panelPosItSurCheckBox);
+            panelPosItSur.add(botonGuardar);
             panelPosItSur.add(boton);
             return panelPosItSur;
         }

@@ -5,8 +5,8 @@
  */
 package Vista;
 
-import Datos.InicioSesion;
-import Datos.Usuario;
+import BD_Manager.InicioSesion;
+import ObjetosBD.Usuario;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -104,7 +104,7 @@ public class VentanaIniciarSesion extends PanelEsquema implements ActionListener
                 frame.add(new VentanaUsuario(frame, usu));
                 frame.setVisible(true);
             } else {
-                lbError.setText("Error, usuario o contrase?a incorrecta.");
+                lbError.setText("Error, usuario o password incorrecto.");
             }
         }
     }

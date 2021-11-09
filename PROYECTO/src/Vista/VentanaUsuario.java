@@ -5,20 +5,22 @@
  */
 package Vista;
 
-import Datos.Consultar;
-import Datos.Usuario;
+import BD_Manager.Consultar;
+import ObjetosBD.Usuario;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,27 +31,33 @@ import javax.swing.UIManager;
  *
  * @author Lugo
  */
-public class VentanaUsuario extends PanelEsquema implements ActionListener, MouseListener {
+public class VentanaUsuario extends PanelEsquema implements ActionListener, MouseListener, ItemListener {
 
     private JPanel panelNorte;
     private FramePrincipal frame;
     private Usuario user;
     private ArrayList<Usuario> usuarios;
     private String rutaIconoUser = "src/imagenes/";
-
+    private String opcionGrafico = "";
+    private final String[] textoGraficos={"Grafico de area"
+            ,"Grafico de barras"
+            ,"Grafico de barras 3D"
+            ,"Grafico de lineas"
+            ,"Grafico de lineas 3D"};
+            
     public VentanaUsuario(FramePrincipal frame, Usuario user) {
         super();
         this.frame = frame;
         this.user = user;
         this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        add(panelNorteUsuarios(), "North");
         if (user.getTipoUser()) {
             Consultar consulta = new Consultar();
-            usuarios = consulta.consultaUsuariosGrupo(user.getIdGroup());
-            add(panelCentro(0), "Center");
+            usuarios = consulta.consultaUsuariosGrupo(this.user.getIdGroup());
+            add(panelCentro(), "Center");
         } else {
-            add(panelCentro(1), "Center");
+            add(panelCentro(), "Center");
         }
-        add(panelNorteUsuarios(), "North");
     }
 
     public JPanel panelNorteUsuarios() {
@@ -69,23 +77,39 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
         panelNorte.add(panelNorteIconos, "East");
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Boton grafica">
-        JPanel panelNorteBotones = new JPanel();
-        panelNorteBotones.setLayout(new FlowLayout(1, 20, 20));
-        panelNorteBotones.setOpaque(false);
+        JPanel panelNorteGrafica = new JPanel();
+        panelNorteGrafica.setLayout(new FlowLayout(1, 40, 20));
+        panelNorteGrafica.setOpaque(false);
+        //<editor-fold defaultstate="collapsed" desc="LISTA">
+        JComboBox<String> combo1 = new JComboBox<String>();
+        combo1.setBounds(10, 10, 80, 20);
+        add(combo1);
+        combo1.addItem(textoGraficos[0]);
+        combo1.addItem(textoGraficos[1]);
+        combo1.addItem(textoGraficos[2]);
+        combo1.addItem(textoGraficos[3]);
+        combo1.addItem(textoGraficos[4]);
+        combo1.addItemListener(this);
+        panelNorteGrafica.add(combo1);
+
+        //</editor-fold>
         JButton botonGrafica = new JButton("Generar grafico");
         botonGrafica.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-
+                if (opcionGrafico.equals("")) {
+                    opcionGrafico="Grafico de area";
+                }
+                new Grafica(opcionGrafico,frame,user);
             }
         });
-        panelNorteBotones.add(botonGrafica);
-        panelNorte.add(panelNorteBotones, "West");
+        panelNorteGrafica.add(botonGrafica);
+        panelNorte.add(panelNorteGrafica, "West");
 //</editor-fold>
         return panelNorte;
     }
 
-    public JPanel panelCentro(int op) {
+    public JPanel panelCentro() {
 
         JPanel panelCentro = new JPanel();
         panelCentro.setLayout(new CardLayout());
@@ -159,5 +183,10 @@ public class VentanaUsuario extends PanelEsquema implements ActionListener, Mous
 
     @Override
     public void mouseExited(MouseEvent me) {
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent ie) {
+        opcionGrafico=ie.getItem().toString();
     }
 }
